@@ -17,11 +17,9 @@ import UIKit
 typealias PlatformColor = UIColor
 #endif
 
-/// A built scene: the root entity, and the background the manifest
-/// declares (the SwiftUI layer shows it behind the RealityKit view).
+/// A built scene: the root entity the app adds to its RealityView.
 struct BuiltScene {
     let root: Entity
-    let background: (r: Double, g: Double, b: Double)?
 }
 
 @MainActor
@@ -57,24 +55,27 @@ enum SceneBuilder {
            let ambient = env.ambientColor ?? env.backgroundColor {
             let tint = Self.color(ambient, alpha: 1)
             let intensity = Float(min(env.ambientIntensity ?? 100, 450))
-            let overhead = DirectionalLight()
-            overhead.name = "ambient-fill-overhead"
-            overhead.light.color = tint
-            overhead.light.intensity = intensity
-            overhead.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: SIMD3(0, -1, 0))
-            root.addChild(overhead)
-            let cameraSide = DirectionalLight()
-            cameraSide.name = "ambient-fill-camera"
-            cameraSide.light.color = tint
-            cameraSide.light.intensity = intensity * 0.4
-            cameraSide.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: simd_normalize(SIMD3(0.3, -0.5, -1)))
-            root.addChild(cameraSide)
+            root.addChild(Self.fillLight(
+                name: "ambient-fill-overhead", tint: tint, intensity: intensity,
+                toward: SIMD3(0, -1, 0)))
+            root.addChild(Self.fillLight(
+                name: "ambient-fill-camera", tint: tint, intensity: intensity * 0.4,
+                toward: simd_normalize(SIMD3(0.3, -0.5, -1))))
         }
 
-        let background = state.environment?.backgroundColor.map { c in
-            (r: c.count > 0 ? c[0] : 0.1, g: c.count > 1 ? c[1] : 0.1, b: c.count > 2 ? c[2] : 0.1)
-        }
-        return BuiltScene(root: root, background: background)
+        return BuiltScene(root: root)
+    }
+
+    /// A soft directional fill pointing `toward` the scene.
+    private static func fillLight(
+        name: String, tint: PlatformColor, intensity: Float, toward: SIMD3<Float>
+    ) -> DirectionalLight {
+        let light = DirectionalLight()
+        light.name = name
+        light.light.color = tint
+        light.light.intensity = intensity
+        light.orientation = simd_quatf(from: SIMD3(0, 0, -1), to: simd_normalize(toward))
+        return light
     }
 
     // MARK: - One entity

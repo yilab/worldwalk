@@ -3,3 +3,7 @@
 xcuserdata/
 *.xcodeproj
 DerivedData/
+.gradle/
+build/
+local.properties
+.kotlin/

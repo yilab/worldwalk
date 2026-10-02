@@ -15,8 +15,26 @@ applied, the branch tips, the state values at the folded tip.
 ## Run
 
 The Apple app lives in [`apple/`](apple/) (SwiftUI + RealityKit, one
-codebase for macOS, iOS, iPadOS and visionOS); the Android app will
-live in `android/`. One product, one repo, two platform trees.
+codebase for macOS, iOS, iPadOS and visionOS); the Android app lives
+in [`android/`](android/) (Compose, riding the format's Kotlin package
+through a Gradle composite build). One product, one repo, two platform
+trees.
+
+```bash
+# Android (needs the Android SDK; bundles the hello-world demo world)
+cd android
+./gradlew :app:assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+The Android app opens straight into the bundled demo world (a copy of
+the spec repo's `examples/hello-world`); Open… picks any `.world`
+folder through the system folder picker. Its v0 renderer is a
+dependency-free painter's-algorithm canvas — perspective projection,
+lambert shading from the fold's own directional light, orbit by drag —
+with Filament/SceneView as the upgrade path. Both platforms show the
+same receipts the fold produces: entity count, edits applied, branch
+tips, state values.
 
 ```bash
 # From this checkout, next to the openworldformat clone:
