@@ -12,7 +12,7 @@ let package = Package(
         // Path dep until the first bare semver tag (v0.1.0) is cut;
         // then flip to the URL form, the way worldprobe flips to
         // crates.io.
-        .package(path: "../openworldformat"),
+        .package(path: "../../openworldformat"),
     ],
     targets: [
         .executableTarget(

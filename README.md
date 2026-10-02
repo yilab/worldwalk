@@ -14,18 +14,23 @@ applied, the branch tips, the state values at the folded tip.
 
 ## Run
 
+The Apple app lives in [`apple/`](apple/) (SwiftUI + RealityKit, one
+codebase for macOS, iOS, iPadOS and visionOS); the Android app will
+live in `android/`. One product, one repo, two platform trees.
+
 ```bash
 # From this checkout, next to the openworldformat clone:
-swift run worldwalk ../openworldformat/examples/hello-world
+cd apple
+swift run worldwalk ../../openworldformat/examples/hello-world
 swift run worldwalk /path/to/any/.world/folder
 ```
 
-Or open `Package.swift` in Xcode and run on a Mac, an iPhone/iPad
-simulator, or a Vision Pro simulator — the app is a SwiftPM
-executable, no project file. Without an argument it opens empty: use
-*File → Open World…* (⌘O) and pick a `.world` folder.
+Or open `apple/Package.swift` in Xcode and run on a Mac, an
+iPhone/iPad simulator, or a Vision Pro simulator — the app is a
+SwiftPM executable, no project file. Without an argument it opens
+empty: use *File → Open World…* (⌘O) and pick a `.world` folder.
 
-The dependency is a path dep to `../openworldformat` (whose package
+The dependency is a path dep to `../../openworldformat` (whose package
 manifest is at the repo root, targeting `swift/`) until the spec
 repository cuts its first bare semver tag; then it flips to the URL
 form, the way [worldprobe][probe] flips to crates.io.
