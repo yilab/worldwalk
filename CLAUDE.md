@@ -33,8 +33,18 @@ Central. Flip both to versioned deps the day they publish.
   plugin in `android/` (it conflicts); only
   `org.jetbrains.kotlin.plugin.compose`. The spec repo's `kotlin/`
   package uses the KMP library plugin instead — different animals.
+- `apple/worldwalk.xcodeproj` (scheme `worldwalk`) is the app —
+  macOS/iOS/iPadOS/visionOS from one target whose synchronized group
+  is `Sources/worldwalk/`, so the Xcode target and the SwiftPM
+  executable compile the same files (`Assets.xcassets` lives there
+  too; SPM excludes it). The fold comes in as a local package
+  reference to `../../openworldformat`. Always open the .xcodeproj,
+  never the `apple/` folder (that opens as the SwiftPM package).
 - Conventional commits, no Co-Authored-By trailers. Green before
   reporting completion: `swift build` in `apple/`,
+  `xcodebuild -project apple/worldwalk.xcodeproj -scheme worldwalk
+  -destination 'platform=macOS' build` (swap in an iOS Simulator
+  destination for the iPhone/iPad check),
   `./gradlew :app:assembleDebug :app:testDebugUnitTest` in `android/`.
 - CI (when the org repo exists): two workflows with path filters —
   macOS for `apple/**`, ubuntu for `android/**` (ANDROID_HOME is on

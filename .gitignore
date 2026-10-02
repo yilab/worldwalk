@@ -1,7 +1,7 @@
 .build/
 .swiftpm/
 xcuserdata/
-*.xcodeproj
+*.xcuserstate
 DerivedData/
 .gradle/
 build/

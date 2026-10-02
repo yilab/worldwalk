@@ -8,6 +8,7 @@
 
 import SwiftUI
 import RealityKit
+import UniformTypeIdentifiers
 import OpenWorldFormat
 
 @main
@@ -251,7 +252,7 @@ struct Sidebar: View {
     }
 
     /// State values as compact literals.
-    static func render(_ value: JSONValue) -> String {
+    nonisolated static func render(_ value: JSONValue) -> String {
         switch value {
         case .null: return "null"
         case .bool(let b): return b ? "true" : "false"
