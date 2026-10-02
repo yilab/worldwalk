@@ -9,18 +9,16 @@ let package = Package(
         .visionOS(.v2),
     ],
     dependencies: [
-        // Path dep until the spec repo publishes its first Swift tag;
-        // then flip to the URL, the way worldprobe flips to crates.io.
-        .package(path: "../openworldformat/swift"),
+        // Path dep until the first bare semver tag (v0.1.0) is cut;
+        // then flip to the URL form, the way worldprobe flips to
+        // crates.io.
+        .package(path: "../openworldformat"),
     ],
     targets: [
         .executableTarget(
             name: "worldwalk",
             dependencies: [
-                // "swift" is the path dependency's identity (SwiftPM
-                // names local packages by their directory); it becomes
-                // "openworldformat" when this flips to the URL form.
-                .product(name: "OpenWorldFormat", package: "swift"),
+                .product(name: "OpenWorldFormat", package: "openworldformat"),
             ]
         ),
     ]

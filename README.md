@@ -25,9 +25,10 @@ simulator, or a Vision Pro simulator — the app is a SwiftPM
 executable, no project file. Without an argument it opens empty: use
 *File → Open World…* (⌘O) and pick a `.world` folder.
 
-The dependency is a path dep to `../openworldformat/swift` until the
-spec repository publishes its first Swift tag; then it flips to the
-URL, the way [worldprobe][probe] flips to crates.io.
+The dependency is a path dep to `../openworldformat` (whose package
+manifest is at the repo root, targeting `swift/`) until the spec
+repository cuts its first bare semver tag; then it flips to the URL
+form, the way [worldprobe][probe] flips to crates.io.
 
 [probe]: https://github.com/openworldformat/worldprobe
 
