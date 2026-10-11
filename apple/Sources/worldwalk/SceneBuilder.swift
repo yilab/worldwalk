@@ -66,6 +66,28 @@ enum SceneBuilder {
         return BuiltScene(root: root)
     }
 
+    // MARK: - Shots (ext-cinematography)
+
+    /// The RealityKit camera that looks through a shot: placed at the
+    /// camera entity's view as the package derives it — through parents,
+    /// `aim_entity` resolved in the fold — with the frame's vertical
+    /// field of view. Letterboxing the frame's aspect into the window is
+    /// the view's job (`Letterbox`); nothing here invents camera math.
+    static func shotCamera(
+        _ entity: WorldEntity, _ camera: OpenWorldFormat.CameraComponent, in state: FoldState
+    ) -> (camera: PerspectiveCamera, frame: CameraFrame) {
+        let view = viewOf(entity, camera, in: state.entities)
+        let frame = frameOf(camera)
+        let node = PerspectiveCamera()
+        node.name = "shot-camera"
+        node.camera.fieldOfViewInDegrees = Float(frame.vfovDegrees)
+        let position = SIMD3<Float>(Float(view.position.x), Float(view.position.y), Float(view.position.z))
+        let forward = SIMD3<Float>(Float(view.forward.x), Float(view.forward.y), Float(view.forward.z))
+        let up = SIMD3<Float>(Float(view.up.x), Float(view.up.y), Float(view.up.z))
+        node.look(at: position + forward, from: position, upVector: up, relativeTo: nil)
+        return (node, frame)
+    }
+
     /// A soft directional fill pointing `toward` the scene.
     private static func fillLight(
         name: String, tint: PlatformColor, intensity: Float, toward: SIMD3<Float>

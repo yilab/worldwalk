@@ -75,6 +75,12 @@ form, the way [worldprobe][probe] flips to crates.io.
   re-folds to that tip. The viewer is the history.
 - **State** — the typed state document folds per branch and shows in
   the sidebar, the way a save game would.
+- **Shots** — a world with `ext-cinematography` cameras gets a shot
+  list in the sidebar (name, lens, size) and a shot picker; looking
+  through one places the camera where the package's reference derives
+  it — through parents, `aim_entity` resolved in the fold — with the
+  frame's field of view, letterboxed to its aspect. The free camera is
+  one click back.
 
 ## What it doesn't (yet) — the viewer profile's must-ignore
 
