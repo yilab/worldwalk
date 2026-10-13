@@ -8,12 +8,14 @@ worldwalk — the Open World Format's viewer: walk a `.world`. One
 product, two platform trees — `apple/` (SwiftUI + RealityKit, one
 codebase for macOS/iOS/iPadOS/visionOS) and `android/` (Compose). The
 fold is the engine: `apple/` rides the spec repo's Swift package
-(`../../openworldformat` — manifest at that repo's root, sources in
-`swift/`), `android/` rides its Kotlin package through a Gradle
-composite build (`includeBuild("../../openworldformat/kotlin")`),
-which substitutes the `org.openworldformat:openworldformat`
-coordinates with local sources until that package publishes to Maven
-Central. Flip both to versioned deps the day they publish.
+(manifest at that repo's root, sources in `swift/`) by its bare semver
+tags — `from: "0.3.5"`; swap in `.package(path: "../../openworldformat")`
+to work against the sibling checkout — and `android/` rides its Kotlin
+package through a Gradle composite build
+(`includeBuild("../../openworldformat/kotlin")`), which substitutes the
+`org.openworldformat:openworldformat` coordinates with local sources
+until that package publishes to Maven Central. Flip it to a versioned
+dep the day it publishes.
 
 ## Rules
 
@@ -37,8 +39,9 @@ Central. Flip both to versioned deps the day they publish.
   macOS/iOS/iPadOS/visionOS from one target whose synchronized group
   is `Sources/worldwalk/`, so the Xcode target and the SwiftPM
   executable compile the same files (`Assets.xcassets` lives there
-  too; SPM excludes it). The fold comes in as a local package
-  reference to `../../openworldformat`. Always open the .xcodeproj,
+  too; SPM excludes it). The fold comes in as a remote package
+  reference to the spec repo, the same `0.3.5` floor as Package.swift
+  — keep the two in step. Always open the .xcodeproj,
   never the `apple/` folder (that opens as the SwiftPM package).
 - Conventional commits, no Co-Authored-By trailers. Green before
   reporting completion: `swift build` in `apple/`,

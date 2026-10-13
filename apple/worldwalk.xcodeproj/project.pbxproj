@@ -370,17 +370,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		CB00100000000000000000A1 /* openworldformat */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../openworldformat";
+/* Begin XCRemoteSwiftPackageReference section */
+		CB00100000000000000000A1 /* XCRemoteSwiftPackageReference "openworldformat" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/openworldformat/openworldformat";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.5;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		CB00100000000000000000A2 /* OpenWorldFormat */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CB00100000000000000000A1 /* openworldformat */;
+			package = CB00100000000000000000A1 /* XCRemoteSwiftPackageReference "openworldformat" */;
 			productName = OpenWorldFormat;
 		};
 /* End XCSwiftPackageProductDependency section */

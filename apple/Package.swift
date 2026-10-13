@@ -9,10 +9,10 @@ let package = Package(
         .visionOS(.v2),
     ],
     dependencies: [
-        // Path dep until the first bare semver tag (v0.1.0) is cut;
-        // then flip to the URL form, the way worldprobe flips to
-        // crates.io.
-        .package(path: "../../openworldformat"),
+        // The spec repo's Swift package, released on bare semver tags
+        // (v0.3.5 on). To work against the sibling checkout instead,
+        // swap in `.package(path: "../../openworldformat")` locally.
+        .package(url: "https://github.com/openworldformat/openworldformat", from: "0.3.5"),
     ],
     targets: [
         .executableTarget(
