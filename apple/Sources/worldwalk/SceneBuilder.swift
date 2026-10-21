@@ -284,10 +284,8 @@ enum SceneBuilder {
         case .capsule(let radius, let halfLength):
             return Self.capsule(radius: radius, halfLength: halfLength)
         case .torus(let majorRadius, let minorRadius):
-            // RealityKit's torus lies flat (axis Y); the format's stands
-            // upright (axis Z) and the conformance world rotates it 90°
-            // about X to lay it flat — so the flat default is where the
-            // document is heading anyway.
+            // The format's torus lies flat in XZ, the ring around +Y
+            // (spec/world.md "The geometry of the shapes"), as this one does.
             return Self.torus(majorRadius: majorRadius, minorRadius: minorRadius)
         case .plane(let x, let z):
             return MeshResource.generatePlane(width: Float(x), depth: Float(z))
@@ -299,6 +297,8 @@ enum SceneBuilder {
             return flatMesh(name: name, triangles: Self.icosahedron(radius: radius))
         case .wedge(let x, let y, let z):
             return flatMesh(name: name, triangles: Self.wedge(x: x, y: y, z: z))
+        case .prism(let sides, let radius, let height):
+            return flatMesh(name: name, triangles: Self.prism(sides: sides, radius: radius, height: height))
         }
     }
 
@@ -408,9 +408,11 @@ enum SceneBuilder {
         let a = SIMD3(-hx, -h, -hz), b = SIMD3(hx, -h, -hz)
         let c = SIMD3(hx, -h, hz), d = SIMD3(-hx, -h, hz)
         let apex = SIMD3(0, h, 0)
+        // Counter-clockwise seen from outside, as the spec's winding rule asks
+        // (flatMesh would flip an inward face, but the source says what it means).
         return [
-            [a, b, apex], [b, c, apex], [c, d, apex], [d, a, apex],  // sides
-            [a, d, c], [a, c, b],                                     // base
+            [b, a, apex], [c, b, apex], [d, c, apex], [a, d, apex],  // sides
+            [a, b, d], [b, c, d],                                     // base
         ]
     }
 
@@ -438,26 +440,55 @@ enum SceneBuilder {
         let v = raw.map { simd_normalize(SIMD3(Float($0.0), Float($0.1), Float($0.2))) * r }
         let faces = [
             [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
-            [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 9],
+            [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
             [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
             [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1],
         ]
         return faces.map { [v[$0[0]], v[$0[1]], v[$0[2]]] }
     }
 
-    /// A ramp: full height at the back, zero at the front, centered.
+    /// A ramp, as spec/world.md "The geometry of the shapes" states it: the
+    /// right-triangle profile in XY — vertical face at -x (full height),
+    /// base at -y, the slope down toward +x — extruded along Z. Its six
+    /// vertices are (-x/2, ±y/2, ±z/2) and (+x/2, -y/2, ±z/2).
     private static func wedge(x: Double, y: Double, z: Double) -> [[SIMD3<Float>]] {
         let hx = Float(x / 2), hy = Float(y / 2), hz = Float(z / 2)
-        // Bottom rectangle, then the top back edge; recentred on Y.
-        let a = SIMD3(-hx, -hy, -hz), b = SIMD3(hx, -hy, -hz)
-        let c = SIMD3(hx, -hy, hz), d = SIMD3(-hx, -hy, hz)
-        let e = SIMD3(-hx, hy, -hz), f = SIMD3(hx, hy, -hz)
+        let af = SIMD3(-hx, -hy, hz), bf = SIMD3(hx, -hy, hz), cf = SIMD3(-hx, hy, hz)
+        let ab = SIMD3(-hx, -hy, -hz), bb = SIMD3(hx, -hy, -hz), cb = SIMD3(-hx, hy, -hz)
         return [
-            [a, d, c], [a, c, b],          // bottom
-            [a, b, f], [a, f, e],          // back, full height
-            [a, e, d], [b, c, f],          // left and right sides
-            [d, e, f], [d, f, c],          // the ramp
+            [af, bf, cf],                   // front cap, z = +hz
+            [bb, ab, cb],                   // back cap, z = -hz
+            [ab, bb, bf], [ab, bf, af],     // bottom
+            [ab, af, cf], [ab, cf, cb],     // the vertical face at -x
+            [bf, bb, cb], [bf, cb, cf],     // the slope
         ]
+    }
+
+    /// The experimental prism, as the spec states it: `sides` 3…8, `radius`
+    /// the circumradius, axis +Y, cap vertex i at (r cos θ, ±h/2, -r sin θ)
+    /// with θ = 2πi/sides — the first vertex on +X, the ring counter-clockwise
+    /// seen from above — sides as quads, caps as fans from vertex 0, outward.
+    private static func prism(sides: Int, radius: Double, height: Double) -> [[SIMD3<Float>]] {
+        let n = min(8, max(3, sides))
+        let hy = Float(height / 2)
+        func ring(_ y: Float) -> [SIMD3<Float>] {
+            (0..<n).map { i in
+                let theta = 2 * Double.pi * Double(i) / Double(n)
+                return SIMD3(Float(radius * cos(theta)), y, Float(-radius * sin(theta)))
+            }
+        }
+        let top = ring(hy), bottom = ring(-hy)
+        var triangles: [[SIMD3<Float>]] = []
+        for i in 0..<n {
+            let j = (i + 1) % n
+            triangles.append([bottom[i], bottom[j], top[j]])
+            triangles.append([bottom[i], top[j], top[i]])
+        }
+        for i in 1..<(n - 1) {
+            triangles.append([top[0], top[i], top[i + 1]])
+            triangles.append([bottom[0], bottom[i + 1], bottom[i]])
+        }
+        return triangles
     }
 
     // MARK: - Materials and colors

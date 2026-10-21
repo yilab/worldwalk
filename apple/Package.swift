@@ -10,9 +10,9 @@ let package = Package(
     ],
     dependencies: [
         // The spec repo's Swift package, released on bare semver tags
-        // (v0.3.5 on). To work against the sibling checkout instead,
-        // swap in `.package(path: "../../openworldformat")` locally.
-        .package(url: "https://github.com/openworldformat/openworldformat", from: "0.3.5"),
+        // (v0.4.0 on: the Prism shape). To work against the sibling checkout
+        // instead, swap in `.package(path: "../../openworldformat")` locally.
+        .package(url: "https://github.com/openworldformat/openworldformat", from: "0.4.0"),
     ],
     targets: [
         .executableTarget(

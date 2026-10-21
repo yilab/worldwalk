@@ -25,6 +25,7 @@ class MeshesTest {
             Shape.Tetrahedron(0.9),
             Shape.Icosahedron(0.8),
             Shape.Wedge(1.5, 1.5, 1.5),
+            Shape.Prism(6, 0.6, 1.5),
         )
         for (shape in shapes) {
             val tris = shapeMesh(shape)
