@@ -376,7 +376,7 @@
 			repositoryURL = "https://github.com/openworldformat/openworldformat";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.5;
+				minimumVersion = 0.4.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

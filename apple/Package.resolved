@@ -1,13 +1,13 @@
 {
-  "originHash" : "3bc10e094d2ced53d21a7c85392c564e688fd504a8522ca960cbfd15918e5aa2",
+  "originHash" : "ad37f86d5f03c2124d93f9ec78cd62b4c3232971098072d8c6076101c1d8be54",
   "pins" : [
     {
       "identity" : "openworldformat",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/openworldformat/openworldformat",
       "state" : {
-        "revision" : "0ebbf54828d192bb5bef2cd09e7a6c44742a1373",
-        "version" : "0.3.5"
+        "revision" : "6ed7475d842859c34a3551c63d634463373f0c26",
+        "version" : "0.4.0"
       }
     }
   ],
